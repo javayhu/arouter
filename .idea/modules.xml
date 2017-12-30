@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/activityrouter/activityrouter.iml" filepath="$PROJECT_DIR$/activityrouter/activityrouter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arouter.iml" filepath="$PROJECT_DIR$/arouter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/stub/stub.iml" filepath="$PROJECT_DIR$/stub/stub.iml" />
+    </modules>
+  </component>
+</project>
