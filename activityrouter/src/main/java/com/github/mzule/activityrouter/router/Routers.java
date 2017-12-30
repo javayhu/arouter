@@ -9,13 +9,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 /**
  * Created by CaoDongping on 4/6/16.
  */
 public class Routers {
 
-    public static String KEY_RAW_URL = "com.github.mzule.activityrouter.router.KeyRawUrl";
+    public static String KEY_RAW_URL = "arouter.KeyRawUrl";
 
     private static List<Mapping> mappings = new ArrayList<>();
 
@@ -42,39 +43,57 @@ public class Routers {
         });
     }
 
+    //these first three methods will call the next three methods, at last the last method will be called
     public static boolean open(Context context, String url) {
         return open(context, Uri.parse(url));
     }
 
-    public static boolean open(Context context, String url, RouterCallback callback) {
-        return open(context, Uri.parse(url), callback);
+    public static boolean open(Context context, String url, Bundle options) {
+        return open(context, Uri.parse(url), options);
+    }
+
+    public static boolean open(Context context, String url, Bundle options, RouterCallback callback) {
+        return open(context, Uri.parse(url), options, callback);
     }
 
     public static boolean open(Context context, Uri uri) {
-        return open(context, uri, getGlobalCallback(context));
+        return open(context, uri, null, getGlobalCallback(context));
     }
 
-    public static boolean open(Context context, Uri uri, RouterCallback callback) {
-        return open(context, uri, -1, callback);
+    public static boolean open(Context context, Uri uri, Bundle options) {
+        return open(context, uri, options, getGlobalCallback(context));
     }
 
+    public static boolean open(Context context, Uri uri, Bundle options, RouterCallback callback) {
+        return open(context, uri, options, -1, callback);
+    }
+
+    //these first two methods will call the next two methods, at last the last method will be called
     public static boolean openForResult(Activity activity, String url, int requestCode) {
         return openForResult(activity, Uri.parse(url), requestCode);
     }
 
-    public static boolean openForResult(Activity activity, String url, int requestCode, RouterCallback callback) {
-        return openForResult(activity, Uri.parse(url), requestCode, callback);
+    public static boolean openForResult(Activity activity, String url, Bundle options, int requestCode) {
+        return openForResult(activity, Uri.parse(url), options, requestCode);
+    }
+
+    public static boolean openForResult(Activity activity, String url, Bundle options, int requestCode, RouterCallback callback) {
+        return openForResult(activity, Uri.parse(url), options, requestCode, callback);
     }
 
     public static boolean openForResult(Activity activity, Uri uri, int requestCode) {
-        return openForResult(activity, uri, requestCode, getGlobalCallback(activity));
+        return openForResult(activity, uri, null, requestCode, getGlobalCallback(activity));
     }
 
-    public static boolean openForResult(Activity activity, Uri uri, int requestCode, RouterCallback callback) {
-        return open(activity, uri, requestCode, callback);
+    public static boolean openForResult(Activity activity, Uri uri, Bundle options, int requestCode) {
+        return openForResult(activity, uri, options, requestCode, getGlobalCallback(activity));
     }
 
-    private static boolean open(Context context, Uri uri, int requestCode, RouterCallback callback) {
+    public static boolean openForResult(Activity activity, Uri uri, Bundle options, int requestCode, RouterCallback callback) {
+        return open(activity, uri, options, requestCode, callback);
+    }
+
+    private static boolean open(Context context, Uri uri, Bundle options, int requestCode, RouterCallback callback) {
         boolean success = false;
         if (callback != null) {
             if (callback.beforeOpen(context, uri)) {
@@ -83,7 +102,7 @@ public class Routers {
         }
 
         try {
-            success = doOpen(context, uri, requestCode);
+            success = doOpen(context, uri, options, requestCode);
         } catch (Throwable e) {
             e.printStackTrace();
             if (callback != null) {
@@ -119,7 +138,7 @@ public class Routers {
         return null;
     }
 
-    private static boolean doOpen(Context context, Uri uri, int requestCode) {
+    private static boolean doOpen(Context context, Uri uri, Bundle options, int requestCode) {
         initIfNeed();
         Path path = Path.create(uri);
         for (Mapping mapping : mappings) {
@@ -141,7 +160,11 @@ public class Routers {
                         throw new RuntimeException("can not startActivityForResult context " + context);
                     }
                 } else {
-                    context.startActivity(intent);
+                    if (options != null) {
+                        context.startActivity(intent, options);
+                    } else {
+                        context.startActivity(intent);
+                    }
                 }
                 return true;
             }
