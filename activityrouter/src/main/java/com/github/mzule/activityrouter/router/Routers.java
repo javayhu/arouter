@@ -43,13 +43,17 @@ public class Routers {
         });
     }
 
-    //these first three methods will call the next three methods, at last the last method will be called
+    //these first four methods will call the next four methods, at last the last method will be called
     public static boolean open(Context context, String url) {
         return open(context, Uri.parse(url));
     }
 
     public static boolean open(Context context, String url, Bundle options) {
-        return open(context, Uri.parse(url), options);
+        return open(context, Uri.parse(url), options, getGlobalCallback(context));
+    }
+
+    public static boolean open(Context context, String url, RouterCallback callback) {
+        return open(context, Uri.parse(url), null, callback);
     }
 
     public static boolean open(Context context, String url, Bundle options, RouterCallback callback) {
@@ -62,6 +66,10 @@ public class Routers {
 
     public static boolean open(Context context, Uri uri, Bundle options) {
         return open(context, uri, options, getGlobalCallback(context));
+    }
+
+    public static boolean open(Context context, Uri uri, RouterCallback callback) {
+        return open(context, uri, null, callback);
     }
 
     public static boolean open(Context context, Uri uri, Bundle options, RouterCallback callback) {
